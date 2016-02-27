@@ -1,3 +1,3 @@
-# Interpol
+# Interpolation methods
 
-Interpolation methods with Java
+Implementation of interpolation methods (Lagrange and Cubic Spline) in Java
