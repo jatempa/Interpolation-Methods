@@ -1,24 +1,28 @@
 package interpolation;
 
 import java.io.*;
-import java.text.DecimalFormat;
 import java.util.*;
 
 public class Interpol {
+    private double t;
+    private Vector<Double> x, y;
+    private FileReader input;
+    private String fileName;
 
-	public static void main(String[] args) {
+	public Interpol(String fileName, double t) {
+		this.fileName = fileName;
+		this.t = t;
+	}
+
+	public void calculate() {
 		try {
-			DecimalFormat f1 = new DecimalFormat("00.00000");
-		    double t = Double.parseDouble(args[0]);
-			//args[0] = "/home/jatempa/workspace/interpolation/src/methods/puntos.dat";
-		    /*	Sets up a file reader to read the file passed on the command line one character at a time */
-		    FileReader input = new FileReader("/home/atempa/Desktop/puntos.dat");
+			x = new Vector<Double>();
+			y = new Vector<Double>();
+		    input = new FileReader(fileName);
 		    /* Filter FileReader through a Buffered read to read a line at a time */
 		    BufferedReader bufRead = new BufferedReader(input);  			
 		    String line; 	// String that holds current file line
 		    StringTokenizer xy;
-		    Vector<Double> x = new Vector<Double>();
-		    Vector<Double> y = new Vector<Double>();
             // Read first line
 		    line = bufRead.readLine();
 		    // Read through file one line at time.
@@ -31,21 +35,28 @@ public class Interpol {
 		        line = bufRead.readLine();
 		    }
 		    bufRead.close();
-			    
-			Lagrange lgr = new Lagrange();
-			System.out.println("Lagrange");		
-			System.out.println("x = "+t+",  f(x) = "+f1.format(lgr.Lagrng(t, x, y)));
-			CSpline spl = new CSpline();
-			System.out.println("Cubic Spline");
-			System.out.println("x = "+t+",  f(x) = "+f1.format(spl.Cubic_Spline(t, x, y)));
-			
-		} catch (ArrayIndexOutOfBoundsException e){
-		    /* If no file was passed on the command line, this expception is generated. A message indicating how to the class should be called is displayed */
-		    System.out.println("Usage: java ReadFile filename\n");			
-
-		} catch (IOException e){
+			getResult(new Lagrange());
+			getResult(new CubicSpline());			
+		} catch (IOException e) {
 		    // If another exception is generated, print a stack trace
 		    e.printStackTrace();
+		}
+	}
+
+	public void getResult(InterpolationMethod interpolationMethod) {
+		if(interpolationMethod != null) {
+			System.out.println(interpolationMethod.toString());		
+			System.out.println("x = "+t+",  f(x) = "+interpolationMethod.calculateResult(t, x, y));			
+		}
+	}
+
+	public static void main(String[] args) {
+		if(args.length == 0 || args.length < 2) {
+			System.out.println("Debe ejecutarse: $ java Interpol pathFileName value");
+			return;			
+		} else {
+			Interpol interpol = new Interpol(args[0], Double.parseDouble(args[1]));
+			interpol.calculate();			
 		}
 	}
 }
