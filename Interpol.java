@@ -6,25 +6,21 @@ import java.util.*;
 public class Interpol {
     private double t;
     private Vector<Double> x, y;
-    private FileReader input;
-    private String fileName;
 
-	public Interpol(String fileName, double t) {
-		this.fileName = fileName;
+	public Interpol(double t) {
 		this.t = t;
+		x = new Vector<Double>();
+		y = new Vector<Double>();
 	}
 
-	public void calculate() {
+	public void readFile(String path){
 		try {
-			x = new Vector<Double>();
-			y = new Vector<Double>();
-		    input = new FileReader(fileName);
+			FileReader input = new FileReader(path);   
 		    /* Filter FileReader through a Buffered read to read a line at a time */
-		    BufferedReader bufRead = new BufferedReader(input);  			
-		    String line; 	// String that holds current file line
+		    BufferedReader bufRead = new BufferedReader(input);
+	        // Read first line
+		    String line = bufRead.readLine();
 		    StringTokenizer xy;
-            // Read first line
-		    line = bufRead.readLine();
 		    // Read through file one line at time.
 		    while (line != null){
 		    	xy = new StringTokenizer(line, "\t");
@@ -35,8 +31,6 @@ public class Interpol {
 		        line = bufRead.readLine();
 		    }
 		    bufRead.close();
-			getResult(new Lagrange());
-			getResult(new CubicSpline());			
 		} catch (IOException e) {
 		    // If another exception is generated, print a stack trace
 		    e.printStackTrace();
@@ -55,8 +49,10 @@ public class Interpol {
 			System.out.println("Debe ejecutarse: $ java Interpol pathFileName value");
 			return;			
 		} else {
-			Interpol interpol = new Interpol(args[0], Double.parseDouble(args[1]));
-			interpol.calculate();			
+			Interpol interpol = new Interpol(Double.parseDouble(args[1]));
+			interpol.readFile(args[0]);
+			interpol.getResult(new Lagrange());
+			interpol.getResult(new CubicSpline());
 		}
 	}
 }
