@@ -55,7 +55,7 @@ public class CubicSpline implements InterpolationMethod {
 			}
 		}
 
-		return Interpol(t, xx, yy, Gauss(matrix, (n-2)), n);
+		return getFunction(t, xx, yy, Gauss(matrix, (n-2)), n);
 	}
 
 	public double[] Gauss(double M[][], int N){
@@ -91,7 +91,7 @@ public class CubicSpline implements InterpolationMethod {
 		return d2x;
 	}
 
-	public float Interpol(double t, Vector<Double> x, Vector<Double> fx, double d2x[], int n){
+	public float getFunction(double t, Vector<Double> x, Vector<Double> fx, double d2x[], int n){
 		boolean flag = false;
 		int i = 1;
 		float result = 0;
