@@ -52,7 +52,7 @@ public class InterpolationHelper {
 			System.out.println(interpolationMethod.toString());
 			System.out.println("x = " + t + ",  f(x) = " + interpolationMethod.calculateResult(t, x, y));			
 		} else {
-			System.out.println("No se ha definido un metodo de interpolacion.");
+			System.out.println("It is not defined an interpolation method.");
 		}
 	}
 }
