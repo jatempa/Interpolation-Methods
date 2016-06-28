@@ -3,15 +3,17 @@ package interpolation;
 import java.util.Vector;
 
 public class CubicSpline implements InterpolationMethod {
+	private int i = 1, l = 0, n = 0, lim_left = 0, lim_right = 0;
+	private float result = 0;
+	private double[][] matrix;
+	private Vector<Double> datos;
+	private boolean flag = false;
 
 	public double calculateResult(double t, Vector<Double> xx, Vector<Double> yy){
-		int i = 1, l = 0, n = 0;
-		int lim_left = 0, lim_right = 0;
-
 		n =  xx.size();
 		lim_right = n - 5;
-		double matrix[][] = new double[n-2][n-1];
-		Vector<Double> datos= new Vector<Double>();
+		matrix = new double[n-2][n-1];
+		datos = new Vector<Double>();
 
 		datos.add(2 * (xx.elementAt(i+1) - xx.elementAt(i-1)));
 		datos.add((xx.elementAt(i+1) - xx.elementAt(i)));
@@ -58,25 +60,22 @@ public class CubicSpline implements InterpolationMethod {
 		return getFunction(t, xx, yy, Gauss(matrix, (n-2)), n);
 	}
 
-	public double[] Gauss(double M[][], int N){
-		double d2x[] = new double[N+2];
+	private double[] Gauss(double matrix[][], int n){
+		double d2x[] = new double[n+2];
 		int i, j, k;
 		double pivote, cero;
 
-		for(i = 0; i < N; i++){
-			pivote = M[i][i];
-
-			for(j = i; j < (N+1); j++){
-				M[i][j] = M[i][j]/pivote; // divide a todo el renglon i entre el elemento diagonal
+		for(i = 0; i < n; i++) {
+			pivote = matrix[i][i];
+			for(j = i; j < (n+1); j++) {
+				matrix[i][j] = matrix[i][j]/pivote; // divide a todo el renglon i entre el elemento diagonal
 			}
 
-			for(k = 0; k < N; k++) // k controla los renglones independientemente de i
-			{
-				if(k != i) // evita hacer cero el elemento diagonal
-				{
-					cero = -M[k][i];
-					for(j = i; j < (N+1); j++){	
-						M[k][j] = M[k][j] + cero*M[i][j]; // hace cero a toda la columna i excepto el elemento diagonal
+			for(k = 0; k < n; k++) { // k controla los renglones independientemente de i
+				if(k != i) { // evita hacer cero el elemento diagonal
+					cero = -matrix[k][i];
+					for(j = i; j < (n+1); j++) {	
+						matrix[k][j] = matrix[k][j] + cero*matrix[i][j]; // hace cero a toda la columna i excepto el elemento diagonal
 					}
 				}
 			}
@@ -84,34 +83,28 @@ public class CubicSpline implements InterpolationMethod {
 		
 		d2x[0] = 0;
 		for (int l = 0; l < (d2x.length - 2); l++) {
-			d2x[l+1] = M[l][N];
+			d2x[l+1] = matrix[l][n];
 		}
-		d2x[N+1] = 0;
+		d2x[n+1] = 0;
 		
 		return d2x;
 	}
 
-	public float getFunction(double t, Vector<Double> x, Vector<Double> fx, double d2x[], int n){
-		boolean flag = false;
-		int i = 1;
-		float result = 0;
+	private float getFunction(double t, Vector<Double> x, Vector<Double> fx, double d2x[], int n){
+		i = 1;
 		try{
-			while(i < n){
-				if (( t  >= x.elementAt(i-1)) && ( t <= x.elementAt(i))){
-
-					  result = (float) ( ((d2x[i-1]/(6*(x.elementAt(i)-x.elementAt(i-1)))) * Math.pow((x.elementAt(i) - t), 3)) + 
+			while(i < n) {
+				if ((t  >= x.elementAt(i-1)) && (t <= x.elementAt(i))) {
+					result = (float) ( ((d2x[i-1]/(6*(x.elementAt(i)-x.elementAt(i-1)))) * Math.pow((x.elementAt(i) - t), 3)) + 
 							           ((d2x[i]/(6*(x.elementAt(i)-x.elementAt(i-1)))) * Math.pow((t - x.elementAt(i-1)), 3)) + 
 							           ((fx.elementAt(i-1)/(x.elementAt(i)-x.elementAt(i-1)) - ((d2x[i-1]*(x.elementAt(i)-x.elementAt(i-1))) / 6)) * (x.elementAt(i) - t)) + 
-							           (((fx.elementAt(i)/(x.elementAt(i)-x.elementAt(i-1))) - ((d2x[i]*(x.elementAt(i)-x.elementAt(i-1)))/6)) * (t - x.elementAt(i-1))) );
-					
+							           (((fx.elementAt(i)/(x.elementAt(i)-x.elementAt(i-1))) - ((d2x[i]*(x.elementAt(i)-x.elementAt(i-1)))/6)) * (t - x.elementAt(i-1))) );		
 					flag = true;
 				}
-	
 				i++;
+			}
 	
-			};
-	
-			if(flag == false){
+			if(flag == false) {
 				System.out.println("Outside range");
 			}
 		} catch(Exception ex){
