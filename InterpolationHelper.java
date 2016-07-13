@@ -19,11 +19,11 @@ public class InterpolationHelper {
 		this.pathFile = pathFile;
 		this.t = t;
 		this.interpolationMethod = interpolationMethod;
+		x = new Vector<Double>();
+		y = new Vector<Double>();
 	}
 
 	private void readFile(){
-		x = new Vector<Double>();
-		y = new Vector<Double>();
 		try {
 			input = new FileReader(pathFile);   
 		    /* Filter FileReader through a Buffered read to read a line at a time */

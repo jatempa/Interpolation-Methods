@@ -6,53 +6,53 @@ public class CubicSpline implements InterpolationMethod {
 	private int i = 1, l = 0, n = 0, lim_left = 0, lim_right = 0;
 	private float result = 0;
 	private double[][] matrix;
-	private Vector<Double> datos;
+	private Vector<Double> data;
 	private boolean flag = false;
 
 	public double calculateResult(double t, Vector<Double> xx, Vector<Double> yy){
 		n =  xx.size();
 		lim_right = n - 5;
 		matrix = new double[n-2][n-1];
-		datos = new Vector<Double>();
+		data = new Vector<Double>();
 
-		datos.add(2 * (xx.elementAt(i+1) - xx.elementAt(i-1)));
-		datos.add((xx.elementAt(i+1) - xx.elementAt(i)));
+		data.add(2 * (xx.elementAt(i+1) - xx.elementAt(i-1)));
+		data.add((xx.elementAt(i+1) - xx.elementAt(i)));
 
 		for (int z = 0; z < (n-4); z++) {
-			datos.add(0.0);
+			data.add(0.0);
 		}
 
-		datos.add(((6 / (xx.elementAt(i+1) - xx.elementAt(i))) * (yy.elementAt(i+1) - yy.elementAt(i))) + ((6 / (xx.elementAt(i)-xx.elementAt(i-1))) * (yy.elementAt(i-1)-yy.elementAt(i))));	 
+		data.add(((6 / (xx.elementAt(i+1) - xx.elementAt(i))) * (yy.elementAt(i+1) - yy.elementAt(i))) + ((6 / (xx.elementAt(i)-xx.elementAt(i-1))) * (yy.elementAt(i-1)-yy.elementAt(i))));	 
 
 		for(i = 2; i < (n-2); i++){
 			for (int z = 0; z < lim_left; z++) {
-				datos.add(0.0);
+				data.add(0.0);
 			}
 			lim_left++;
 
-			datos.add((xx.elementAt(i)-xx.elementAt(i-1)));
-			datos.add(2 * (xx.elementAt(i+1) - xx.elementAt(i-1)));
-			datos.add((xx.elementAt(i+1) - xx.elementAt(i)));
+			data.add((xx.elementAt(i)-xx.elementAt(i-1)));
+			data.add(2 * (xx.elementAt(i+1) - xx.elementAt(i-1)));
+			data.add((xx.elementAt(i+1) - xx.elementAt(i)));
 
 			for (int z = 0; z < lim_right; z++) {
-				datos.add(0.0);
+				data.add(0.0);
 			}
 			lim_right--;
 
-			datos.add(((6 / (xx.elementAt(i+1) - xx.elementAt(i))) * (yy.elementAt(i+1) - yy.elementAt(i))) + ((6 / (xx.elementAt(i) - xx.elementAt(i-1))) * (yy.elementAt(i-1)-yy.elementAt(i))));
+			data.add(((6 / (xx.elementAt(i+1) - xx.elementAt(i))) * (yy.elementAt(i+1) - yy.elementAt(i))) + ((6 / (xx.elementAt(i) - xx.elementAt(i-1))) * (yy.elementAt(i-1)-yy.elementAt(i))));
 		}   	 	 
 
 		for (int z = 0; z < (n-4); z++) {
-			datos.add(0.0);
+			data.add(0.0);
 		}
 
-		datos.add((xx.elementAt(i)-xx.elementAt(i-1)));
-		datos.add(2 * (xx.elementAt(i+1) - xx.elementAt(i-1)));
-		datos.add(((6 / (xx.elementAt(i+1) - xx.elementAt(i))) * (yy.elementAt(i+1) - yy.elementAt(i))) + ((6 / (xx.elementAt(i)-xx.elementAt(i-1))) * (yy.elementAt(i-1) - yy.elementAt(i))));
+		data.add((xx.elementAt(i)-xx.elementAt(i-1)));
+		data.add(2 * (xx.elementAt(i+1) - xx.elementAt(i-1)));
+		data.add(((6 / (xx.elementAt(i+1) - xx.elementAt(i))) * (yy.elementAt(i+1) - yy.elementAt(i))) + ((6 / (xx.elementAt(i)-xx.elementAt(i-1))) * (yy.elementAt(i-1) - yy.elementAt(i))));
 
 		for(int j = 0; j < i; j++){
 			for(int k = 0; k < (i+1); k++){
-				matrix[j][k] = datos.elementAt(l);
+				matrix[j][k] = data.elementAt(l);
 				l++;
 			}
 		}
@@ -63,19 +63,19 @@ public class CubicSpline implements InterpolationMethod {
 	private double[] Gauss(double matrix[][], int n){
 		double d2x[] = new double[n+2];
 		int i, j, k;
-		double pivote, cero;
+		double pivot, zero;
 
 		for(i = 0; i < n; i++) {
-			pivote = matrix[i][i];
+			pivot = matrix[i][i];
 			for(j = i; j < (n+1); j++) {
-				matrix[i][j] = matrix[i][j]/pivote; // divide a todo el renglon i entre el elemento diagonal
+				matrix[i][j] = matrix[i][j]/pivot;
 			}
 
-			for(k = 0; k < n; k++) { // k controla los renglones independientemente de i
-				if(k != i) { // evita hacer cero el elemento diagonal
-					cero = -matrix[k][i];
+			for(k = 0; k < n; k++) {
+				if(k != i) { 
+					zero = -matrix[k][i];
 					for(j = i; j < (n+1); j++) {	
-						matrix[k][j] = matrix[k][j] + cero*matrix[i][j]; // hace cero a toda la columna i excepto el elemento diagonal
+						matrix[k][j] = matrix[k][j] + (zero * matrix[i][j]);
 					}
 				}
 			}
@@ -104,9 +104,8 @@ public class CubicSpline implements InterpolationMethod {
 				i++;
 			}
 	
-			if(flag == false) {
+			if(!flag)
 				System.out.println("Outside range");
-			}
 		} catch(Exception ex){
 			System.out.println(ex);
 		}
