@@ -63,19 +63,19 @@ public class CubicSpline implements InterpolationMethod {
 	private double[] Gauss(double matrix[][], int n){
 		double d2x[] = new double[n+2];
 		int i, j, k;
-		double pivote, cero;
+		double pivot, zero;
 
 		for(i = 0; i < n; i++) {
-			pivote = matrix[i][i];
+			pivot = matrix[i][i];
 			for(j = i; j < (n+1); j++) {
-				matrix[i][j] = matrix[i][j]/pivote; // divide a todo el renglon i entre el elemento diagonal
+				matrix[i][j] = matrix[i][j]/pivot;
 			}
 
-			for(k = 0; k < n; k++) { // k controla los renglones independientemente de i
-				if(k != i) { // evita hacer cero el elemento diagonal
-					cero = -matrix[k][i];
+			for(k = 0; k < n; k++) {
+				if(k != i) { 
+					zero = -matrix[k][i];
 					for(j = i; j < (n+1); j++) {	
-						matrix[k][j] = matrix[k][j] + cero*matrix[i][j]; // hace cero a toda la columna i excepto el elemento diagonal
+						matrix[k][j] = matrix[k][j] + (zero * matrix[i][j]);
 					}
 				}
 			}
@@ -104,9 +104,8 @@ public class CubicSpline implements InterpolationMethod {
 				i++;
 			}
 	
-			if(flag == false) {
+			if(!flag)
 				System.out.println("Outside range");
-			}
 		} catch(Exception ex){
 			System.out.println(ex);
 		}
